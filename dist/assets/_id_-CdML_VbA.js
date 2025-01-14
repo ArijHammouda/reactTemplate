@@ -1,0 +1,1 @@
+import{a as r,j as s}from"./index-D_mlBAek.js";const t=()=>{const{id:e}=r();return s.jsxs("div",{className:"container mx-auto p-4",children:[s.jsx("h1",{className:"text-4xl font-bold",children:"this is exemple "}),s.jsxs("p",{children:["Viewing profile for user ID: ",e]})]})};export{t as default};

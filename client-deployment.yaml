@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: react-app-deployment
+spec:
+  replicas: 2  
+  selector:
+    matchLabels:
+      app: react-app
+  template:
+    metadata:
+      labels:
+        app: react-app
+    spec:
+      containers:
+      - name: react-app
+        image: arijzhd/react-vite-dev:latest  
+        ports:
+        - containerPort: 3000
+        env:
+        - name: VITE_ENV
+          valueFrom:
+            configMapKeyRef:
+              name: react-app-config
+              key: VITE_ENV

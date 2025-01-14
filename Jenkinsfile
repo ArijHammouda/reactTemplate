@@ -1,31 +1,48 @@
 pipeline {
     agent any
 
-
     environment {
-        // Définir les variables d'environnement
-        GIT_REPO_URL = 'git@github.com:ArijHammouda/reactTemplate.git' 
+        
+        GIT_REPO_URL = 'git@github.com:ArijHammouda/reactTemplate.git'
         DOCKERHUB_CREDENTIALS = credentials('dockerhub')
         IMAGE_NAME_CLIENT = 'arijzhd/react-vite-dev'  // Remplacez "username" par votre utilisateur Docker Hub
+        CLIENT_DIR = 'client' 
     }
 
     stages {
         stage('Clone Repository') {
             steps {
-                git credentialsId: 'GitHub_ssh', url: "${GIT_REPO_URL}"  // Cloner le dépôt avec l'authentification SSH
+                git credentialsId: 'GitHub_ssh', url: "${GIT_REPO_URL}"  
+            }
+        }
+
+        stage('Detect Changes') {
+            steps {
+                script {
+                    
+                    def changedFiles = sh(script: 'git diff --name-only $GIT_PREVIOUS_COMMIT $GIT_COMMIT', returnStdout: true).trim().split("\n")
+                  
+                    env.CLIENT_CHANGED = changedFiles.any { it.startsWith(CLIENT_DIR) }
+                }
             }
         }
 
         stage('Build Client Image') {
+            when {
+                expression { return env.CLIENT_CHANGED == 'true' }
+            }
             steps {
                 script {
-                    // Construction de l'image Docker pour le client (React)
+                    
                     dockerImageClient = docker.build("${IMAGE_NAME_CLIENT}")
                 }
             }
         }
 
         stage('Scan Client Image') {
+            when {
+                expression { return env.CLIENT_CHANGED == 'true' }
+            }
             steps {
                 script {
                     // Exécution du scan Trivy sur l'image Docker du client
@@ -39,14 +56,29 @@ pipeline {
         }
 
         stage('Push Client Image to Docker Hub') {
+            when {
+                expression { return env.CLIENT_CHANGED == 'true' }
+            }
             steps {
                 script {
-                    // Connexion au registre Docker Hub et push de l'image
+                    
                     docker.withRegistry('', "${DOCKERHUB_CREDENTIALS}") {
                         dockerImageClient.push()
                     }
                 }
             }
+        }
+    }
+
+    post {
+        always {
+            echo 'Pipeline terminé'
+        }
+        success {
+            echo 'Le pipeline a réussi!'
+        }
+        failure {
+            echo 'Le pipeline a échoué.'
         }
     }
 }

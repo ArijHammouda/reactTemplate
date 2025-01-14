@@ -6,10 +6,10 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "5173:5173" # Mappe le port 5173 du conteneur au port 5173 de l'hôte
+      - "5173:5173"
     volumes:
-      - .:/app       # Monte le dossier de votre projet local dans le conteneur
-      - /app/node_modules # Évite de monter node_modules pour éviter des conflits
+      - .:/app     
+      - /app/node_modules 
     command: npm run dev -- --host
     environment:
       - NODE_ENV=development
