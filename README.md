@@ -68,10 +68,8 @@ This project demonstrates a fully automated CI/CD pipeline for deploying a React
 
 - Integrate automated testing in the pipeline.
 - Implement a Helm chart for Kubernetes deployments.
-- Set up a monitoring solution (e.g., Prometheus and Grafana).
 
 ---
 
-For any queries, feel free to contact the project maintainer.
 
 Happy Coding!
