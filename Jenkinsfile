@@ -1,10 +1,6 @@
 pipeline {
     agent any
 
-    triggers {
-        // Polling sur le dépôt Git pour détecter les changements
-        pollSCM('H/5 * * * *')  // Vérifie les changements toutes les 5 minutes
-    }
 
     environment {
         // Définir les variables d'environnement
